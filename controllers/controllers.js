@@ -34,11 +34,24 @@ function register (req, res) {
     db.run(sql, [username, hashed_password, "1"], function (err) {
       if (err) {
         res.send(JSON.stringify({ status: "Error Reigstering" }));
-      }
-      res.send(JSON.stringify({ status: "User Created" }));
-    });
+      } else {
+        db.get('SELECT * FROM users WHERE username = ?', [username], (error, row) => {
+            if (error) {
+                res.send('Error');
+            } else {
+                db.run('INSERT INTO carts (user_id) VALUES (?)', [row.user_id], (err) => {
+                    if (err) {
+                        res.send('Error');
+                    } else {
+                        res.send(JSON.stringify({ status:'User created' }));
+                    }
+                })
+            }
+        })
+    }
+    })
 };
-  
+
 function login (req, res)  {
 const { username, password } = req.body;
 
@@ -54,7 +67,27 @@ const { username, password } = req.body;
     });
 };
 
-function addToCart (req, res) {
+function addToCart(req, res) {
+    const token = req.headers.authorization;
+    const decoded = jwt.decode(token);
+    const { username } = decoded;
+
+    db.get('SELECT * FROM users WHERE username = ?', [username], (error, row) => {
+        if (error) {
+            res.send('Error');
+        } else {
+            db.run('INSERT INTO cart_items (user_id, product_id) VALUES (?, ?)', [row.user_id, req.body.id], (error) => {
+                if (error) {
+                    res.send('Error');
+                } else {
+                    res.send(JSON.stringify({ status:'Product added'}));
+                }
+            })
+        }
+    })
+};
+
+function addProduct (req, res) {
     if (checkAdmin(req, res)) {
         const {name, price} = req.body
 
@@ -108,6 +141,7 @@ function deleteProduct (req, res) {
     register,
     login,
     addToCart,
+    addProduct,
     updateProdut,
     deleteProduct
 }
