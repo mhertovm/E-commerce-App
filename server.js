@@ -14,6 +14,7 @@ productsSchema.createProductsTable(db);
 cartsSchema.createCartsTabel(db);
 cartItemSchema.createCartItemsTable(db);
 
+
 app.use(express.json());
 app.use('/', router);
 app.listen(port, () => {
