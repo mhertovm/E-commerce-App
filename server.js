@@ -8,7 +8,7 @@ const usersSchema = require('./models/users_schema');
 const productsSchema = require('./models/products_schema');
 const cartsSchema = require('./models/carts_schema');
 const cartItemSchema = require('./models/cartItem_schema');
-// let SECRET = "secrettoken"
+
 usersSchema.createUsersTable(db);
 productsSchema.createProductsTable(db);
 cartsSchema.createCartsTabel(db);
