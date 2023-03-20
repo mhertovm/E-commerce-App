@@ -3,6 +3,7 @@ const db = new sqlite.Database('database.db');
 const CryptoJS = require("crypto-js");
 const { generateAccessToken } = require('../functions/generateAccessToken');
 const { checkAdmin } = require('../functions/checkAdmin');
+const jwt = require("jsonwebtoken");
 
 
 function getRoot(req, res) {
@@ -52,15 +53,16 @@ function register (req, res) {
     })
 };
 
+
 function login (req, res)  {
-const { username, password } = req.body;
+    const { username, password } = req.body;
 
     const hashed_password = CryptoJS.SHA256(password).toString();
     let sql = "SELECT * from users WHERE username = ?";
     db.get(sql, [username], function (err, row) {
         if (username == row.username && hashed_password == row.password) {
         const token = generateAccessToken(row.username, row.role);
-        res.send(JSON.stringify({ status: "Logged in",jwt:token }));
+        res.send(JSON.stringify({ status: "Logged in", jwt:token }));
         } else {
         res.send(JSON.stringify({ status: "Wrong credentials" }));
         }

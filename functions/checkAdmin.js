@@ -8,4 +8,4 @@ function checkAdmin(req, res){
     }
   }
 
-  module.exports = { checkAdmin }
+  module.exports = { checkAdmin };
